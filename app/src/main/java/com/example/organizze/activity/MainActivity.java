@@ -1,7 +1,5 @@
 package com.example.organizze.activity;
 
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,15 +8,18 @@ import android.widget.Toolbar;
 import com.example.organizze.R;
 import com.example.organizze.activity.CadastroActivity;
 import com.example.organizze.activity.LoginActivity;
+import com.example.organizze.helper.ConfiguracaoFirebase;
+import com.google.firebase.auth.FirebaseAuth;
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
 import com.heinrichreimersoftware.materialintro.slide.FragmentSlide;
 
 public class MainActivity extends IntroActivity {
 
+    private FirebaseAuth autenticacao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+
         setButtonBackVisible(false);
         setButtonNextVisible(false);
 
@@ -45,6 +46,7 @@ public class MainActivity extends IntroActivity {
         addSlide(new FragmentSlide.Builder()
                 .background(android.R.color.white)
                 .fragment(R.layout.intro_cadastro)
+                .canGoForward(false)
                 .build()
         );
     }
@@ -56,5 +58,18 @@ public class MainActivity extends IntroActivity {
     public void buttonCadastrarConta(View view){
         startActivity(new Intent(this, CadastroActivity.class));
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        verificarUsuarioLogado();
+    }
+
+    public void verificarUsuarioLogado(){
+        autenticacao = ConfiguracaoFirebase.getInstaceFirebaseAuth();
+        if(autenticacao.getCurrentUser()!= null){
+            startActivity(new Intent(getApplicationContext(),PrincipalActivity.class));
+        }
     }
 }
